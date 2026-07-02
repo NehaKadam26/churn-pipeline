@@ -97,8 +97,6 @@ Scheduled/manual retraining in the cloud is handled by the GitHub Actions workfl
 
 ## ⚠️ Limitations
 
-Being upfront about this rather than dressing it up:
-
 - **Only 5 retraining runs so far** — the F1 improvement trend (0.582 → 0.612) is real but based on a small number of batches, not a long-running production history.
 - **Batches are simulated**, not truly live incremental data — a fixed dataset was split and fed in over time to demonstrate the automation pattern, not sourced from a real streaming pipeline.
 - **Recall plateaus (~0.54–0.57)** while precision improves more with additional data — worth investigating further (e.g. class imbalance handling, threshold tuning) rather than something the current pipeline solves.
