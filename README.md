@@ -4,7 +4,7 @@ An end-to-end ML pipeline that retrains a customer churn model on incrementally 
 
 **Stack:** Python · scikit-learn · GitHub Actions · SQLite · Streamlit
 
-**🔗 Live dashboard:** [churn-pipeline-26.streamlit.app](https://churn-pipeline-26.streamlit.app)
+**Live dashboard:** [churn-pipeline-26.streamlit.app](https://churn-pipeline-26.streamlit.app)
 
 ---
 
