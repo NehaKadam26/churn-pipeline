@@ -10,13 +10,15 @@ An end-to-end ML pipeline that retrains a customer churn model on incrementally 
 
 ## 🧭 Overview
 
-Most "churn prediction" portfolio projects stop at a single notebook that trains one model once. This project's focus is different: **the automation itself is the centerpiece.**
+Most "churn prediction" portfolio projects stop at a single notebook that trains one model once. This project's focus is different: the automation itself is the centerpiece.
 
-- New batches of customer data are ingested and the model is retrained automatically via **GitHub Actions**, on both a schedule and manual trigger.
-- Every run's metrics (precision, recall, F1, accuracy, confusion matrix) are logged to a **SQLite** table.
-- A **Streamlit dashboard** reads that table live to show pipeline status, run history, and F1 trend — so you can verify the automation is actually working, not just trust that it is.
+- New batches of customer data are ingested and the model is retrained automatically via GitHub Actions, on both a schedule and manual trigger.
+- Every run's metrics (precision, recall, F1, accuracy, confusion matrix) are logged to a SQLite table.
+- A Streamlit dashboard reads that table live to show pipeline status, run history, and F1 trend — so you can verify the automation is actually working, not just trust that it is.
 
-Dataset: [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn), fed in incremental batches to simulate data arriving over time.
+**Dataset**: [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn), fed in incremental batches to simulate data arriving over time.
+
+---
 
 ## 🏗️ Architecture
 
@@ -39,6 +41,8 @@ data arrives (batch)
 
 Retraining is triggered by `.github/workflows/retrain.yml` — both on a schedule and via manual `workflow_dispatch`. Each run shows up as a `github-actions[bot]` commit in the repo history, which is the actual proof the automation runs in the cloud rather than just on a local machine.
 
+---
+
 ## 📈 Results (5 retraining runs, real data from `training_runs`)
 
 | Batches | Customers | Precision | Recall | F1 | Accuracy |
@@ -53,6 +57,8 @@ F1 improved monotonically from **0.582 → 0.612** (+5%) as more data was incorp
 
 > A 6th run (same 5 batches, re-triggered via GitHub Actions) produced **identical metrics** — expected, since training is deterministic on unchanged data. Kept in the dashboard as automation-verification proof, not counted as a distinct data point in the trend above.
 
+---
+
 ## 🖥️ Dashboard
 
 The Streamlit app shows:
@@ -60,24 +66,49 @@ The Streamlit app shows:
 - F1 / precision / recall / accuracy trend as training data grows
 - Automation verification (confirms runs came from GitHub Actions, not local execution)
 
-**Overview & performance trend**
-![Dashboard overview](screenshots/dashboard_overview.png)
+**Overview & Performance Trend**
 
-**Automation verification**
-![Automation verification](screenshots/automation_verification.png)
+![Dashboard overview](screenshots/overview.png)
+
+**Run History**
+
+![Run History](screenshots/run_history.png)
+
+**Automation Verification**
+
+![Automation Verification](screenshots/automation_check.png)
+
+---
 
 ## 📁 Repo structure
 
-```
-├── src/
-│   ├── ingest.py                  # loads/appends a new data batch
-│   ├── train.py                   # trains model, logs run to SQLite
-│   └── export_for_tableau.py      # exports training_runs to CSV
-├── .github/workflows/retrain.yml  # scheduled + manual retraining
+```text
+churn-pipeline/
+│
+├── .github/
+│   └── workflows/
+│       └── retrain.yml          # GitHub Actions workflow for automated retraining
+│
 ├── data/
-├── app.py                         # Streamlit dashboard
-└── README.md
+│   ├── raw/
+│   │   └── telco_churn_full.csv # Source dataset
+│   └── pipeline.db              # SQLite database used by the pipeline
+│
+├── models/
+│   └── model.pkl                # Trained churn prediction model
+│
+├── screenshots/
+│
+├── src/
+│   ├── app.py                   # Streamlit dashboard
+│   ├── ingest.py                # Data ingestion pipeline
+│   └── train.py                 # Model training script
+│
+├── .gitignore
+├── README.md
+└── requirements.txt
 ```
+---
 
 ## ▶️ Running it locally
 
@@ -95,12 +126,16 @@ streamlit run app.py
 
 Scheduled/manual retraining in the cloud is handled by the GitHub Actions workflow — see the **Actions** tab in the repo for run history.
 
+---
+
 ## ⚠️ Limitations
 
 - **Only 5 retraining runs so far** — the F1 improvement trend (0.582 → 0.612) is real but based on a small number of batches, not a long-running production history.
 - **Batches are simulated**, not truly live incremental data — a fixed dataset was split and fed in over time to demonstrate the automation pattern, not sourced from a real streaming pipeline.
 - **Recall plateaus (~0.54–0.57)** while precision improves more with additional data — worth investigating further (e.g. class imbalance handling, threshold tuning) rather than something the current pipeline solves.
 - **Timestamp inconsistency**: local runs are logged in IST while GitHub Actions runs are logged in UTC; `run_at` values are not yet normalized to a single timezone.
+
+---
 
 ## 🛣️ Roadmap
 
