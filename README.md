@@ -66,17 +66,13 @@ The Streamlit app shows:
 - F1 / precision / recall / accuracy trend as training data grows
 - Automation verification (confirms runs came from GitHub Actions, not local execution)
 
-**Overview & Performance Trend**
+**Dashboard Overview:**
 
-![Dashboard overview](screenshots/overview.png)
+![Dashboard overview](screenshots/dashboard_overview.png)
 
-**Run History**
+**Automation Verification:**
 
-![Run History](screenshots/run_history.png)
-
-**Automation Verification**
-
-![Automation Verification](screenshots/automation_check.png)
+![Automation Verification](screenshots/automation_verfication.png)
 
 ---
 
